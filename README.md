@@ -49,7 +49,7 @@ Execute script for version 10 dataset: scripts/new_final_file_creates_v10.py and
 ### 4. Generate Analysis & Figures
 Run the following scripts to reproduce the findings and visualizations found in the report:
 
-Regressions: scripts/regression_model_A_B.py, scripts/OLS_regression_model_A_B.py, and scripts/DiD_regression_rural_urban.py.
+Regressions: scripts/regression_model_A_B.py, scripts/OLS_regression_model_A_B.py, scripts/DiD_regression_rural_urban.py, and regression_on_clinical_failure.
 
 Visualizations: scripts/initial_graphs.py, scripts/other_graphs.py, scripts/map_produces_graphs.py, and scripts/Difference-in-Differences Point Plot.py.
 
@@ -58,11 +58,16 @@ Note: All regression summaries and tables are automatically exported to the tabl
 ## Results at a Glance: The "Rural Friction" Effect
 The following table summarizes the primary Two-Way Fixed Effects (TWFE) results from DiD_regression_rural_urban.py.
 
-Variable,Coefficient (β),Std. Error,P-Value,Significance
-Medicaid Expansion × Rural,0.0037,0.0014,0.0105,p<0.05
-Unemployment Rate,0.0011,0.0005,0.0325,p<0.05
-Median Income (per $10k),-0.0215,0.0003,0.0000,p<0.001
-Uninsured Rate,0.0016,0.0003,0.0000,p<0.001
+### Results at a Glance: The "Rural Friction" Effect
+
+The following table summarizes the primary **Two-Way Fixed Effects (TWFE)** results from `DiD_regression_rural_urban.py`.
+
+| Variable | Coefficient ($\beta$) | Std. Error | P-Value | Significance |
+| :--- | :--- | :--- | :--- | :--- |
+| **Medicaid Expansion $\times$ Rural** | **0.0037** | **0.0014** | **0.0105** | $p < 0.05$ |
+| Unemployment Rate | 0.0011 | 0.0005 | 0.0325 | $p < 0.05$ |
+| Median Income (per $10k) | -0.0215 | 0.0003 | 0.0000 | $p < 0.001$ |
+| Uninsured Rate | 0.0016 | 0.0003 | 0.0000 | $p < 0.001$ |
 
 ### Interpretation
 The positive and significant coefficient on the Rural Interaction term ($0.0037$) indicates that rural counties experienced a relative increase in medical debt compared to urban counties following Medicaid expansion. This suggests that while insurance coverage expanded, the underlying "friction"—caused by higher preventable hospitalization rates ($p < 0.001$ in Model B)—offset the expected financial gains of the policy.
