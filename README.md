@@ -5,7 +5,8 @@ Author: Precious Esielem
 Institution: Dartmouth College, QSS 84
 
 Date: March 2026
-## Project OverviewThis research investigates how the impact of Medicaid Expansion on medical debt in collections varies across the urban-rural continuum. Specifically, it evaluates the "Rural Friction" hypothesis: the theory that geographic barriers and healthcare infrastructure deficits in rural areas diminish the financial protections typically provided by insurance expansion.### Key Finding Using a Two-Way Fixed Effects (TWFE) model on a panel of 26,581 observations, this study identifies a significant geographic divergence. While Medicaid Expansion successfully reduces debt in urban centers, it is associated with a 0.37 percentage point increase ($p=0.0105$) in medical debt in rural counties, a phenomenon largely mediated by high rates of preventable hospitalizations.
+## Project Overview
+This research investigates how the impact of Medicaid Expansion on medical debt in collections varies across the urban-rural continuum. Specifically, it evaluates the "Rural Friction" hypothesis: the theory that geographic barriers and healthcare infrastructure deficits in rural areas diminish the financial protections typically provided by insurance expansion.### Key Finding Using a Two-Way Fixed Effects (TWFE) model on a panel of 26,581 observations, this study identifies a significant geographic divergence. While Medicaid Expansion successfully reduces debt in urban centers, it is associated with a 0.37 percentage point increase ($p=0.0105$) in medical debt in rural counties, a phenomenon largely mediated by high rates of preventable hospitalizations.
 ## Data Sources
 Urban Institute: County-level medical debt in collections (2011–2023).
 
