@@ -21,7 +21,13 @@ The primary causal analysis utilizes a Two-Way Fixed Effects (TWFE) Difference-i
 
 $$share\_debt_{it} = \beta_1(Expansion_{it} \times Rural_i) + \gamma X_{it} + \alpha_i + \delta_t + \epsilon_{it}$$
 
-Where:$\alpha_i$ represents County Fixed Effects (controlling for time-invariant local factors).$\delta_t$ represents Year Fixed Effects (controlling for national economic shocks).$X_{it}$ is a vector of socioeconomic controls (Income, Unemployment, Uninsured Rate).Standard errors are clustered at the state level.
+Where:
+$\alpha_i$ 
+represents County Fixed Effects (controlling for time-invariant local factors).
+$\delta_t$
+represents Year Fixed Effects (controlling for national economic shocks).
+$X_{it}$
+is a vector of socioeconomic controls (Income, Unemployment, Uninsured Rate). Standard errors are clustered at the state level.
 ## How to Replicate
 Follow these steps to reproduce the dataset and the final analysis:
 ### 1. Clone the Repository
