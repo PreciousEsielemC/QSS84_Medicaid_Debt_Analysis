@@ -1,5 +1,7 @@
 # QSS84_Medicaid_Debt_Analysis
+
 Geographic Disparities in Medical Debt: The "Rural Friction" of Medicaid Expansion
+
 Author: Precious Esielem
 
 Institution: Dartmouth College, QSS 84
