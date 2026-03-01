@@ -19,7 +19,7 @@ AHRQ / County Health Rankings: Preventable Hospitalization Rates used as the pri
 ## Econometric Specification
 The primary causal analysis utilizes a Two-Way Fixed Effects (TWFE) Difference-in-Differences approach:
 
-$$share_\_debt_{it} = \beta_1(Expansion_{it} \times Rural_i) + \gamma X_{it} + \alpha_i + \delta_t + \epsilon_{it}$$
+$$share\_debt_{it} = \beta_1(Expansion_{it} \times Rural_i) + \gamma X_{it} + \alpha_i + \delta_t + \epsilon_{it}$$
 
 Where:
 
