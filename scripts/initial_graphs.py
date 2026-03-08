@@ -2,68 +2,78 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# 1. Load your Master Dataset
-# If you are using the CSV file:
+# Set professional publication style for the poster
+sns.set_theme(style="whitegrid", context="talk")
+plt.rcParams.update({'font.family': 'serif'})
+
+# 1. Load Dataset
 df = pd.read_csv('FINAL_DATASET_V13_MASTER.csv')
 
-# --- GRAPH 1: Overall Debt Trends (Expansion vs. Non-Expansion) ---
-plt.figure(figsize=(12, 6))
-sns.lineplot(data=df, x='year', y='share_debt_all', hue='medicaid_expansion', marker='o')
+# 2. Filter for Urban and Rural only (Removing Suburban for cleaner comparison)
+df_filtered = df[df['geo_type'].isin(['Urban', 'Rural'])].copy()
 
-# Adding a vertical line for the 2014 policy implementation
-plt.axvline(x=2014, color='red', linestyle='--', label='ACA Expansion Start')
+# Helper function to clean legend labels
+def fix_labels(df):
+    df['Medicaid Status'] = df['medicaid_expansion'].map({0: 'Non-Expansion', 1: 'Expansion'})
+    return df
 
-plt.title('Medical Debt Trends: Expansion vs. Non-Expansion States (2012-2023)')
-plt.ylabel('Share of Population with Medical Debt')
-plt.xlabel('Year')
-plt.legend(title='Medicaid Expansion', labels=['Non-Expansion (0)', 'Expansion (1)'])
-plt.grid(True, alpha=0.3)
-plt.savefig('debt_trend_expansion.png')
-print("Saved: debt_trend_expansion.png")
+df_filtered = fix_labels(df_filtered)
 
+# --- GRAPH 1: Overall Debt Trends (Urban vs. Rural) ---
+plt.figure(figsize=(14, 8))
+sns.lineplot(data=df_filtered, x='year', y='share_debt_all', hue='geo_type',
+             palette=['#4682B4', '#A52A2A'], linewidth=4, marker='s', markersize=12)
 
-# --- GRAPH 2: Geographic Trends (Urban vs. Suburban vs. Rural) ---
-plt.figure(figsize=(12, 6))
-sns.lineplot(data=df, x='year', y='share_debt_all', hue='geo_type',
-             hue_order=['Urban', 'Suburban', 'Rural'], marker='s')
+plt.title('Medical Debt Baseline: Urban vs. Rural Counties', fontsize=26, pad=20, fontweight='bold')
+plt.ylabel('Share of Population with Medical Debt', fontsize=22)
+plt.xlabel('Year', fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.legend(title='Geography', fontsize=18, title_fontsize=20)
 
-plt.title('Medical Debt Levels by Geographic County Type')
-plt.ylabel('Share of Population with Medical Debt')
-plt.xlabel('Year')
-plt.grid(True, alpha=0.3)
-plt.savefig('debt_trend_geo.png')
-print("Saved: debt_trend_geo.png")
+plt.savefig('debt_trend_geo.pdf', format='pdf', bbox_inches='tight')
+print("Saved: debt_trend_geo.pdf")
 
+# --- GRAPH 2: The Interaction (FacetGrid: Urban vs. Rural) ---
+# Side-by-side comparison of Expansion impact
+g = sns.FacetGrid(df_filtered, col="geo_type", col_order=['Urban', 'Rural'],
+                  height=7, aspect=0.9, hue="Medicaid Status", palette=['#A52A2A', '#00693e'])
 
-# --- GRAPH 3: The Interaction (Expansion Impact per Geo Type) ---
-# This creates a "FacetGrid" (side-by-side plots)
-g = sns.FacetGrid(df, col="geo_type", col_order=['Urban', 'Suburban', 'Rural'],
-                  height=5, aspect=0.8)
-g.map_dataframe(sns.lineplot, x="year", y="share_debt_all", hue="medicaid_expansion", marker='o')
+g.map_dataframe(sns.lineplot, x="year", y="share_debt_all", linewidth=4, marker='o', markersize=10)
 
-g.set_axis_labels("Year", "Share of Medical Debt")
-g.add_legend(title="Expansion Status")
-plt.subplots_adjust(top=0.8)
-g.fig.suptitle('Expansion Impact: Urban vs. Suburban vs. Rural Comparison')
-plt.savefig('debt_interaction_geo.png')
-print("Saved: debt_interaction_geo.png")
+# Formatting FacetGrid for the poster
+g.set_titles("{col_name} Counties", size=24, fontweight='bold')
+g.set_axis_labels("Year", "Share of Medical Debt", fontsize=22)
 
+# Adding a vertical line for 2014 in each facet
+for ax in g.axes.flat:
+    ax.axvline(x=2014, color='black', linestyle='--', alpha=0.7)
+    ax.tick_params(labelsize=18)
 
-# --- GRAPH 4: Mechanism Check (Hospitalization vs. Debt) ---
-# Filter for years 2012-2020 where we have hospitalization data
-df_hosp = df[df['year'] <= 2020].dropna(subset=['preventable_hosp_rate', 'share_debt_all'])
+plt.subplots_adjust(top=0.82, wspace=0.2)
+g.fig.suptitle('Expansion Impact: Urban vs. Rural Divergence', fontsize=28, fontweight='bold')
+g.add_legend(title="Medicaid Status", fontsize=18, title_fontsize=20)
 
-plt.figure(figsize=(10, 6))
-# Using a sample of 2000 points so the plot isn't too crowded
-sns.scatterplot(data=df_hosp.sample(2000), x='preventable_hosp_rate', y='share_debt_all', alpha=0.4)
-# Add a trend line
-sns.regplot(data=df_hosp.sample(2000), x='preventable_hosp_rate', y='share_debt_all',
-            scatter=False, color='red')
+plt.savefig('debt_geo_interaction.pdf', format='pdf', bbox_inches='tight')
+print("Saved: debt_geo_interaction.pdf")
 
-plt.title('Mechanism Check: Preventable Hospitalizations vs. Medical Debt')
-plt.xlabel('Preventable Hospital Stays (per 100,000 residents)')
-plt.ylabel('Share of Medical Debt')
-plt.savefig('hosp_vs_debt_correlation.png')
-print("Saved: hosp_vs_debt_correlation.png")
+# --- GRAPH 3: Mechanism Check (Hospitalization vs. Debt) ---
+df_hosp = df_filtered[df_filtered['year'] <= 2020].dropna(subset=['preventable_hosp_rate', 'share_debt_all'])
+sample_data = df_hosp.sample(min(2500, len(df_hosp)))
 
-plt.show() # This will pop the graphs up on your screen in PyCharm
+plt.figure(figsize=(12, 8))
+sns.scatterplot(data=sample_data, x='preventable_hosp_rate', y='share_debt_all',
+                alpha=0.4, color='#4682B4', s=100)
+sns.regplot(data=sample_data, x='preventable_hosp_rate', y='share_debt_all',
+            scatter=False, color='#A52A2A', line_kws={"linewidth":5})
+
+plt.title('Mechanism: Preventable Hospitalizations vs. Medical Debt', fontsize=26, pad=20, fontweight='bold')
+plt.xlabel('Preventable Hospital Stays (per 100,000 residents)', fontsize=22)
+plt.ylabel('Share of Population with Medical Debt', fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+
+plt.savefig('hosp_vs_debt_correlation.pdf', format='pdf', bbox_inches='tight')
+print("Saved: hosp_vs_debt_correlation.pdf")
+
+plt.show()
