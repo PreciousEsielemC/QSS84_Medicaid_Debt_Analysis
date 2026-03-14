@@ -3,81 +3,146 @@ from linearmodels.panel import PanelOLS
 
 """
 RESEARCH SPECIFICATION: TWO-WAY FIXED EFFECTS (TWFE)
----------------------------------------------------
-Model Choice: Two-Way Fixed Effects (TWFE) Difference-in-Differences.
-- Entity Effects (County): Controls for time-invariant county characteristics (e.g., geography, local culture).
-- Time Effects (Year): Controls for national shocks (e.g., the 2022 credit reporting changes or COVID-19).
+-----------------------------------------------------
+Model Choice: Two-Way Fixed Effects Difference-in-Differences.
 
-Clustering: Standard Errors are clustered by State.
-- Reason: Medicaid Expansion is a state-level policy. Clustering by state accounts for 
-  within-state correlation of errors and ensures our T-stats are not artificially inflated, 
-  making the 0.0037 rural effect more statistically robust.
+- County Fixed Effects (EntityEffects):
+  These absorb characteristics that do not change over time within a county
+  (for example geography, long-run economic structure, or local institutions).
+
+- Year Fixed Effects (TimeEffects):
+  These capture nationwide shocks that affect all counties in a given year,
+  such as COVID-19 or the 2022 credit reporting policy changes.
+
+Clustering of Standard Errors:
+Standard errors are clustered at the county level.
+
+Why cluster?
+Medicaid expansion is implemented at the state level, which means counties
+within the same state may share correlated shocks. Clustering prevents
+standard errors from being artificially small and gives more reliable
+statistical inference.
 """
-# 1. Load your master dataset
-# Ensure your CSV has: fips, year, share_debt_all, medicaid_expansion, is_rural, state_fips, etc.
-df = pd.read_csv('FINAL_DATASET_V13_MASTER.csv')
 
-# 2. Create the Urban Binary
-# If is_rural is 1 for rural, then (1 - 1) = 0 for rural and (1 - 0) = 1 for urban.
+# --- STEP 1: LOAD DATA ---
+# Load the final cleaned dataset used for the main regressions
+df = pd.read_csv(
+    '/Users/preciousesielem/PycharmProjects/QSS84_Medicaid_Debt_Analysis/'
+    'data/processed/FINAL_DATASET_V13_NO_HOSP.csv'
+)
+
+# --- STEP 2: CREATE URBAN INDICATOR ---
+# Convert the rural indicator into an urban one.
+# If is_rural = 1 → is_urban = 0
+# If is_rural = 0 → is_urban = 1
 df['is_urban'] = 1 - df['is_rural']
 
-# 3. Set the Panel Index (Entity and Time)
-# This is required for PanelOLS to know what the 'Fixed Effects' are.
+# --- STEP 3: DEFINE PANEL STRUCTURE ---
+# PanelOLS requires a multi-index identifying the panel unit (county)
+# and the time dimension (year).
 df = df.set_index(['fips', 'year'])
 
-# 4. Define the Regression Model
-# We follow Prof. DeWan's rule: No 'is_urban' main effect, only the interaction.
-# We include your significant controls: unemployment, income, and uninsured rate.
-
-formula = (
+# ==========================================================================
+# MODEL A: URBAN INTERACTION
+# This model estimates the Medicaid expansion effect specifically for
+# urban counties. Think of this as the urban baseline effect.
+# ==========================================================================
+formula_urban = (
     "share_debt_all ~ "
-    "medicaid_expansion:is_urban + "  # This is the Urban Interaction
-    "unemployment_rate + " 
-    "median_income + " 
-    "uninsured_rate + " 
-    "EntityEffects + TimeEffects"     # This adds the Two-Way Fixed Effects
-)
-
-# 5. Run the Model with State-Level Clustering
-# Clustering by state accounts for the fact that Medicaid is a state-level policy.
-model_urban = PanelOLS.from_formula(formula, data=df)
-results_urban = model_urban.fit(cov_type='clustered', cluster_entity=True)
-
-# 6. Display the Results
-print("==========================================================")
-print("URBAN INTERACTION SPECIFICATION (TWFE DID)")
-print("==========================================================")
-print(results_urban.summary)
-
-# 7. (Optional) Run the Rural Interaction side-by-side for comparison
-formula_rural = (
-    "share_debt_all ~ "
-    "medicaid_expansion:is_rural + " 
-    "unemployment_rate + " 
-    "median_income + " 
-    "uninsured_rate + " 
+    "medicaid_expansion:is_urban + "   # Interaction term capturing the
+                                       # expansion effect in urban counties.
+                                       # We omit the main urban term because
+                                       # it does not vary over time and is
+                                       # absorbed by county fixed effects.
+    "unemployment_rate + "
+    "median_income + "
+    "uninsured_rate + "
     "EntityEffects + TimeEffects"
 )
-results_rural = PanelOLS.from_formula(formula_rural, data=df).fit(cov_type='clustered', cluster_entity=True)
 
-print("\n\n==========================================================")
-print("RURAL INTERACTION SPECIFICATION (TWFE DID)")
-print("==========================================================")
+results_urban = PanelOLS.from_formula(formula_urban, data=df).fit(
+    cov_type='clustered', cluster_entity=True
+)
+
+print("=" * 60)
+print("MODEL A: URBAN INTERACTION SPECIFICATION (TWFE DiD)")
+print("=" * 60)
+print(results_urban.summary)
+
+# ==========================================================================
+# MODEL B: RURAL INTERACTION
+# This model estimates the expansion effect in rural counties.
+# It is used to test whether rural areas experience a different
+# outcome from the policy (the hypothesized "rural friction").
+# ==========================================================================
+formula_rural = (
+    "share_debt_all ~ "
+    "medicaid_expansion:is_rural + "   # Interaction capturing the
+                                       # expansion effect in rural counties
+    "unemployment_rate + "
+    "median_income + "
+    "uninsured_rate + "
+    "EntityEffects + TimeEffects"
+)
+
+results_rural = PanelOLS.from_formula(formula_rural, data=df).fit(
+    cov_type='clustered', cluster_entity=True
+)
+
+print("\n" + "=" * 60)
+print("MODEL B: RURAL INTERACTION SPECIFICATION (TWFE DiD)")
+print("=" * 60)
 print(results_rural.summary)
 
-# --- STEP 8: EXPORT RESULTS TO TEXT FILE FOR OVERLEAF ---
+# ==========================================================================
+# MODEL C: COMBINED POLICY GAP
+# This specification includes both the main expansion effect and the
+# rural interaction. The main effect represents the urban baseline,
+# while the interaction shows how the rural effect differs from urban.
+#
+# In other words, this model directly tests whether Medicaid expansion
+# works differently in rural versus urban counties.
+# ==========================================================================
+formula_combined = (
+    "share_debt_all ~ "
+    "medicaid_expansion + "            # Baseline expansion effect
+                                       # (interpreted as the urban effect)
+    "medicaid_expansion:is_rural + "   # Additional effect for rural counties
+    "unemployment_rate + "
+    "median_income + "
+    "uninsured_rate + "
+    "EntityEffects + TimeEffects"
+)
 
-with open("DiD_regression_results_V13.txt", "w") as f:
-    f.write("==========================================================\n")
-    f.write("URBAN INTERACTION SPECIFICATION (TWFE DID)\n")
-    f.write("==========================================================\n")
+results_combined = PanelOLS.from_formula(formula_combined, data=df).fit(
+    cov_type='clustered', cluster_entity=True
+)
+
+print("\n" + "=" * 60)
+print("MODEL C: COMBINED POLICY GAP (MAIN + RURAL INTERACTION)")
+print("=" * 60)
+print(results_combined.summary)
+
+# --- STEP 4: SAVE RESULTS FOR LATEX / OVERLEAF ---
+# Export the regression summaries to a text file so they can easily
+# be copied into tables or appended to the research report.
+output_path = "/Users/preciousesielem/PycharmProjects/QSS84_Medicaid_Debt_Analysis/tables/DiD_regression_results_V13.txt"
+with open(output_path, "w") as f:
+    f.write("QSS 84: Medicaid Expansion & Medical Debt — TWFE DiD Results\n")
+    f.write("=" * 60 + "\n\n")
+
+    f.write("MODEL A: URBAN INTERACTION SPECIFICATION (TWFE DiD)\n")
+    f.write("=" * 60 + "\n")
     f.write(str(results_urban.summary))
+    f.write("\n\n")
 
-    f.write("\n\n" + "=" * 60 + "\n\n")
-
-    f.write("==========================================================\n")
-    f.write("RURAL INTERACTION SPECIFICATION (TWFE DID)\n")
-    f.write("==========================================================\n")
+    f.write("MODEL B: RURAL INTERACTION SPECIFICATION (TWFE DiD)\n")
+    f.write("=" * 60 + "\n")
     f.write(str(results_rural.summary))
+    f.write("\n\n")
 
-print("\nSuccess! 'DiD_regression_results_V13.txt' created in your project folder.")
+    f.write("MODEL C: COMBINED POLICY GAP (MAIN + RURAL INTERACTION)\n")
+    f.write("=" * 60 + "\n")
+    f.write(str(results_combined.summary))
+
+print(f"\nSuccess! '{output_path}' created in your project folder.")

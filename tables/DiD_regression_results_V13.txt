@@ -1,77 +1,114 @@
-==========================================================
-URBAN INTERACTION SPECIFICATION (TWFE DID)
-==========================================================
+QSS 84: Medicaid Expansion & Medical Debt — TWFE DiD Results
+============================================================
+
+MODEL A: URBAN INTERACTION SPECIFICATION (TWFE DiD)
+============================================================
                           PanelOLS Estimation Summary                           
 ================================================================================
-Dep. Variable:         share_debt_all   R-squared:                        0.0130
-Estimator:                   PanelOLS   R-squared (Between):              0.3194
-No. Observations:               26581   R-squared (Within):               0.0431
-Date:                Sun, Mar 01 2026   R-squared (Overall):              0.3127
-Time:                        01:20:57   Log-likelihood                 5.556e+04
+Dep. Variable:         share_debt_all   R-squared:                        0.0393
+Estimator:                   PanelOLS   R-squared (Between):              0.6959
+No. Observations:               35868   R-squared (Within):              -0.0479
+Date:                Fri, Mar 13 2026   R-squared (Overall):              0.6436
+Time:                        22:47:14   Log-likelihood                 7.046e+04
 Cov. Estimator:             Clustered                                           
-                                        F-statistic:                      77.318
-Entities:                        3040   P-value                           0.0000
-Avg Obs:                       8.7438   Distribution:                 F(4,23529)
+                                        F-statistic:                      335.31
+Entities:                        3078   P-value                           0.0000
+Avg Obs:                       11.653   Distribution:                 F(4,32775)
 Min Obs:                       1.0000                                           
-Max Obs:                       9.0000   F-statistic (robust):             18.692
+Max Obs:                       12.000   F-statistic (robust):             67.370
                                         P-value                           0.0000
-Time periods:                       9   Distribution:                 F(4,23529)
-Avg Obs:                       2953.4                                           
-Min Obs:                       2926.0                                           
-Max Obs:                       3023.0                                           
+Time periods:                      12   Distribution:                 F(4,32775)
+Avg Obs:                       2989.0                                           
+Min Obs:                       2939.0                                           
+Max Obs:                       3067.0                                           
                                                                                 
                                       Parameter Estimates                                      
 ===============================================================================================
                              Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
 -----------------------------------------------------------------------------------------------
-unemployment_rate               0.0012     0.0005     2.2516     0.0244      0.0002      0.0022
-median_income                3.653e-07  6.878e-08     5.3114     0.0000   2.305e-07   5.001e-07
-uninsured_rate                  0.0015     0.0003     5.4265     0.0000      0.0010      0.0021
-medicaid_expansion:is_urban    -0.0004     0.0015    -0.2840     0.7765     -0.0033      0.0024
+unemployment_rate               0.0017     0.0003     5.9323     0.0000      0.0012      0.0023
+median_income                1.328e-06  1.157e-07     11.481     0.0000   1.102e-06   1.555e-06
+uninsured_rate                  0.0027     0.0003     10.663     0.0000      0.0022      0.0032
+medicaid_expansion:is_urban    -0.0007     0.0015    -0.4753     0.6346     -0.0035      0.0022
 ===============================================================================================
 
-F-test for Poolability: 46.766
+F-test for Poolability: 45.584
 P-value: 0.0000
-Distribution: F(3047,23529)
+Distribution: F(3088,32775)
 
 Included effects: Entity, Time
 
+MODEL B: RURAL INTERACTION SPECIFICATION (TWFE DiD)
 ============================================================
-
-==========================================================
-RURAL INTERACTION SPECIFICATION (TWFE DID)
-==========================================================
                           PanelOLS Estimation Summary                           
 ================================================================================
-Dep. Variable:         share_debt_all   R-squared:                        0.0136
-Estimator:                   PanelOLS   R-squared (Between):              0.3310
-No. Observations:               26581   R-squared (Within):               0.0394
-Date:                Sun, Mar 01 2026   R-squared (Overall):              0.3239
-Time:                        01:20:57   Log-likelihood                 5.557e+04
+Dep. Variable:         share_debt_all   R-squared:                        0.0426
+Estimator:                   PanelOLS   R-squared (Between):              0.7153
+No. Observations:               35868   R-squared (Within):              -0.0746
+Date:                Fri, Mar 13 2026   R-squared (Overall):              0.6602
+Time:                        22:47:14   Log-likelihood                 7.052e+04
 Cov. Estimator:             Clustered                                           
-                                        F-statistic:                      81.167
-Entities:                        3040   P-value                           0.0000
-Avg Obs:                       8.7438   Distribution:                 F(4,23529)
+                                        F-statistic:                      364.51
+Entities:                        3078   P-value                           0.0000
+Avg Obs:                       11.653   Distribution:                 F(4,32775)
 Min Obs:                       1.0000                                           
-Max Obs:                       9.0000   F-statistic (robust):             19.782
+Max Obs:                       12.000   F-statistic (robust):             74.625
                                         P-value                           0.0000
-Time periods:                       9   Distribution:                 F(4,23529)
-Avg Obs:                       2953.4                                           
-Min Obs:                       2926.0                                           
-Max Obs:                       3023.0                                           
+Time periods:                      12   Distribution:                 F(4,32775)
+Avg Obs:                       2989.0                                           
+Min Obs:                       2939.0                                           
+Max Obs:                       3067.0                                           
                                                                                 
                                       Parameter Estimates                                      
 ===============================================================================================
                              Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
 -----------------------------------------------------------------------------------------------
-unemployment_rate               0.0011     0.0005     2.1387     0.0325   9.466e-05      0.0022
-median_income                3.648e-07  6.861e-08     5.3173     0.0000   2.303e-07   4.993e-07
-uninsured_rate                  0.0016     0.0003     5.7727     0.0000      0.0011      0.0022
-medicaid_expansion:is_rural     0.0037     0.0014     2.5597     0.0105      0.0009      0.0065
+unemployment_rate               0.0016     0.0003     5.6512     0.0000      0.0011      0.0022
+median_income                1.379e-06   1.16e-07     11.889     0.0000   1.152e-06   1.607e-06
+uninsured_rate                  0.0029     0.0003     11.291     0.0000      0.0024      0.0034
+medicaid_expansion:is_rural     0.0090     0.0014     6.4884     0.0000      0.0063      0.0118
 ===============================================================================================
 
-F-test for Poolability: 46.675
+F-test for Poolability: 44.583
 P-value: 0.0000
-Distribution: F(3047,23529)
+Distribution: F(3088,32775)
+
+Included effects: Entity, Time
+
+MODEL C: COMBINED POLICY GAP (MAIN + RURAL INTERACTION)
+============================================================
+                          PanelOLS Estimation Summary                           
+================================================================================
+Dep. Variable:         share_debt_all   R-squared:                        0.0427
+Estimator:                   PanelOLS   R-squared (Between):              0.7143
+No. Observations:               35868   R-squared (Within):              -0.0761
+Date:                Fri, Mar 13 2026   R-squared (Overall):              0.6592
+Time:                        22:47:14   Log-likelihood                 7.052e+04
+Cov. Estimator:             Clustered                                           
+                                        F-statistic:                      292.58
+Entities:                        3078   P-value                           0.0000
+Avg Obs:                       11.653   Distribution:                 F(5,32774)
+Min Obs:                       1.0000                                           
+Max Obs:                       12.000   F-statistic (robust):             59.878
+                                        P-value                           0.0000
+Time periods:                      12   Distribution:                 F(5,32774)
+Avg Obs:                       2989.0                                           
+Min Obs:                       2939.0                                           
+Max Obs:                       3067.0                                           
+                                                                                
+                                      Parameter Estimates                                      
+===============================================================================================
+                             Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
+-----------------------------------------------------------------------------------------------
+medicaid_expansion              0.0022     0.0015     1.4787     0.1392     -0.0007      0.0052
+unemployment_rate               0.0016     0.0003     5.6119     0.0000      0.0011      0.0022
+median_income                1.363e-06  1.162e-07     11.729     0.0000   1.135e-06   1.591e-06
+uninsured_rate                  0.0029     0.0003     11.330     0.0000      0.0024      0.0034
+medicaid_expansion:is_rural     0.0073     0.0018     4.1305     0.0000      0.0038      0.0108
+===============================================================================================
+
+F-test for Poolability: 44.589
+P-value: 0.0000
+Distribution: F(3088,32774)
 
 Included effects: Entity, Time
